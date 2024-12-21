@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torchvision.transforms.functional as TF
+import numpy as np
 
 class DoubleConv(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size=3):
@@ -64,7 +65,7 @@ class SpectrogramUNet(nn.Module):
       # adding the components of expansive path
       for feature in reversed(features[:-1]):
           self.upward.append(UpSampling(in_channels=in_channel, out_channels=feature))
-          self.upward.append(DoubleDeConv(in_channels=feature, out_channels=feature))
+          self.upward.append(DoubleDeConv(in_channels=feature*2, out_channels=feature))
           in_channel=feature
     
       self.final_conv = nn.Conv2d(in_channels=in_channel, out_channels=out_channel, kernel_size=1)
@@ -96,6 +97,8 @@ class SpectrogramUNet(nn.Module):
             x = self.upward[i+1](concattted)
         
         return self.final_conv(x)
+
+
 
 
 

@@ -4,7 +4,7 @@ import torch
 def L1( input, target):
 
     if (input.shape != target.shape):
-        raise ValueError("Shapes of target and predicted target don't match")
+        raise ValueError(f"Shapes of target and predicted target don't match \n\n Should be: {target.shape} but is {input.shape}")
     
     return torch.mean(torch.abs(input-target))
 

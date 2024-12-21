@@ -1,3 +1,4 @@
 DSD100/
 venv/
 Spectrograms/
+__pycache__/
