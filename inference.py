@@ -1,3 +1,9 @@
+"""
+This section is used to make inference (separate sources) using the trained models. It assumes that the input data is in an npz file with mix, accompaniment, drum, bass
+and other components. Each of these components should contain data of shape (1, 1025, 173) ---> (channel, freq_bins, time frames)
+"""
+
+
 import torch, torchaudio
 from torchaudio.transforms import GriffinLim
 import numpy as np
@@ -31,7 +37,7 @@ def infer(model, mix_spectrogram):
 if __name__=="__main__":
  
  model = SpectrogramUNet(in_channel=1, out_channel=2)
- model.load_state_dict(torch.load('.voicemodel.pth', weights_only=True))
+ model.load_state_dict(torch.load('models/vocal-accompaniment-separation/.voicemodel.pth', weights_only=True))
  model.eval()
  
  spectrogram = np.load(BASE_DIR+"/test/350.npz")
