@@ -36,10 +36,11 @@ def to_mono(signal):
 
 def audio_to_spectrogram(waveform, window_size, hop_length):
   waveform = to_mono(waveform)
-  to_spectrogram  = torchaudio.transforms.Spectrogram(n_fft=window_size, hop_length=hop_length)
+  to_spectrogram  = torchaudio.transforms.Spectrogram(n_fft=window_size, hop_length=hop_length, power=None)
   stft = to_spectrogram(waveform)
   magnitude = torch.abs(stft)
-  return magnitude
+  phase = torch.angle(stft)
+  return magnitude, phase
 
 
 def cut_out_waveform(waveform, sample_step):
@@ -62,10 +63,12 @@ def preprocess_DSD100(dataset_base_path, save_path, window_size, hop_length, sam
   os.makedirs(save_path, exist_ok=True)
   
   for i, (dirpath, dirname, filename) in enumerate(os.walk(os.path.join(dataset_base_path, 'Mixtures'))):
+   if idx<=2157:
     for f in filename:
 
         waveforms = {}
-        spectrograms = {}
+        spectrograms = {} 
+     
         path_components = dirpath.split(os.path.sep)
 
         song_name = path_components[-1]
@@ -83,9 +86,20 @@ def preprocess_DSD100(dataset_base_path, save_path, window_size, hop_length, sam
         for t in file_types:
           if t != 'mix':
             waveforms[t], _ = torchaudio.load(os.path.join(dataset_base_path, 'Sources', str(section), str(song_name), t+'.wav')) 
-          spectrograms[t] = [audio_to_spectrogram(tukra, window_size, hop_length) for tukra in cut_out_waveform(waveforms[t], sample_step)]
+          spectrograms[t] = []
+
+          phase_mix = None if section=="train" else []
+
+          for tukra in cut_out_waveform(waveforms[t], sample_step):
+            mag, phase = audio_to_spectrogram(tukra, window_size, hop_length)
+            spectrograms[t].append(mag)
+
+            if section != "train" and t=="mix": 
+             phase_mix.append(phase)
+             
+
         print(f"Processing complete. \n")
-        print(f"mix size={len(spectrograms['mix'])}\naccompaniment size = {len(spectrograms['accompaniment'])}\nvocal size ={len(spectrograms['vocals'])}\n\n ")
+        print(f"mix size={len(spectrograms['mix'])}\naccompaniment size = {len(spectrograms['accompaniment'])}\nvocal size ={len(spectrograms['vocals'])}\n phase of mixture size = {len(phase_mix)}")
 
         for n in range(len(spectrograms['accompaniment'])):
         
@@ -95,7 +109,9 @@ def preprocess_DSD100(dataset_base_path, save_path, window_size, hop_length, sam
                   vocals = spectrograms['vocals'][n].numpy(), 
                   bass = spectrograms['bass'][n].numpy(), 
                   drum = spectrograms['drums'][n].numpy(), 
-                  other = spectrograms['other'][n].numpy())
+                  other = spectrograms['other'][n].numpy(),
+                  phase_mix = phase_mix[n].numpy() if section != "train" else None
+                  )
           idx+=1
       
 

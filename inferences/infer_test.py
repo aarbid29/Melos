@@ -14,16 +14,26 @@ import torch.nn.functional as F
 SAMPLING_RATE = 44100
 BASE_DIR = "./Spectrograms"
 
-def spec_to_audio(spectrogram, name, n_fft=2048 ):
+
+def spec_to_audio(spectrogram, phase, name, n_fft=2048 ):
  
- griffith = GriffinLim(2048)
+ stft_comp = spectrogram*torch.exp(1j*phase)
  print(spectrogram.dim())
  if (spectrogram.dim()==2):
   spectrogram=spectrogram.unsqueeze(0)
- audio = griffith(spectrogram)
+ audio = torch.istft(
+        stft_comp, 
+        n_fft=n_fft, 
+        hop_length=512, 
+        normalized=False, 
+        return_complex=False,
+        
+    )
  audio = audio.to(dtype=torch.float32)
  torchaudio.save(f"./{name}.wav", audio, SAMPLING_RATE)
  print("Audio saved")
+
+
 
 
 def infer(model, mix_spectrogram):
@@ -40,19 +50,20 @@ if __name__=="__main__":
  model.load_state_dict(torch.load('models/vocal-accompaniment-separation/.voicemodel.pth', weights_only=True))
  model.eval()
  
- spectrogram = np.load(BASE_DIR+"/test/350.npz")
+ spectrogram = np.load(BASE_DIR+"/test/2100.npz")
  mix = torch.from_numpy(spectrogram['mix'])
 
 
  actual_vocal_part = torch.from_numpy(spectrogram['vocals'])
  actual_acc_part = torch.from_numpy(spectrogram['accompaniment'])
- spec_to_audio(spectrogram=mix, name="mix")
- spec_to_audio(spectrogram=actual_vocal_part, name="vocal")
- spec_to_audio(spectrogram=actual_acc_part, name="acc")
+ phase = torch.from_numpy(spectrogram['phase_mix'])
+ spec_to_audio(spectrogram=mix, phase=phase, name="mix")
+ spec_to_audio(spectrogram=actual_vocal_part, phase=phase, name="vocal")
+ spec_to_audio(spectrogram=actual_acc_part, phase=phase, name="acc")
 
  inferred_vocal, inferred_acc = infer(model=model, mix_spectrogram=mix.unsqueeze(0))
- spec_to_audio(10*abs(inferred_vocal), name="ivocal")
- spec_to_audio(abs(inferred_acc), name="iacc")
+ spec_to_audio(100*abs(inferred_vocal), phase=phase, name="ivocal")
+ spec_to_audio(abs(inferred_acc), phase=phase, name="iacc")
 
  
 
