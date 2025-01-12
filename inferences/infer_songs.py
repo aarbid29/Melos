@@ -5,8 +5,8 @@ import os
 import math
 from architectures.UNet.UNet import SpectrogramUNet
 from torchaudio.transforms import GriffinLim
-from ..preprocessor import to_mono, audio_to_spectrogram, cut_out_waveform
-from infer_test import infer, spec_to_audio
+from preprocessor import to_mono, audio_to_spectrogram, cut_out_waveform
+from inferences.infer_test import infer, spec_to_audio
 
 SAMPLING_RATE = 44100
 WINDOW_SIZE = 2048
@@ -51,7 +51,7 @@ def process_audio(file_path, model_path, output_dir="./output"):
         inferred_vocal, inferred_acc = infer(model, mix_spectrogram=magnitude)
 
       
-        reconstructed_vocals.append((100 * abs(inferred_vocal), phase))
+        reconstructed_vocals.append((10 * abs(inferred_vocal), phase))
         reconstructed_accompaniment.append((abs(inferred_acc), phase))
 
     
@@ -75,6 +75,6 @@ if __name__ == "__main__":
     
     process_audio(
         file_path="basantaa.mp3",
-        model_path="../models/vocal-accompaniment-separation/.voicemodel.pth",
+        model_path="models/vocal-accompaniment-separation/.voicemodel.pth",
         output_dir="."
     )
