@@ -5,7 +5,7 @@ import os
 import math
 from architectures.UNet.UNet import SpectrogramUNet
 from torchaudio.transforms import GriffinLim
-from preprocessor import to_mono, audio_to_spectrogram, cut_out_waveform
+from scripts.preprocess import to_mono, audio_to_spectrogram, cut_out_waveform
 from inferences.infer_test import infer, spec_to_audio
 
 SAMPLING_RATE = 44100

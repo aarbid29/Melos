@@ -33,8 +33,8 @@ class InstrumentLoss(nn.Module):
         self.alpha3=alpha3
         self.alpha4=alpha4
          
-    def forward(self, vocal, cVocal, drum, cDrum, bass, cBass, other, cOther):
-        loss = self.alpha1*L1(vocal, cVocal) + self.alpha2*L1(drum, cDrum) + self.alpha3*L1(bass, cBass) + self.alpha4*L1(other, cOther)
+    def forward(self, vocal, cVocal, drum, cDrum, guitar, cGuitar, other, cOther):
+        loss = self.alpha1*L1(vocal, cVocal) + self.alpha2*L1(drum, cDrum) + self.alpha3*L1(guitar, cGuitar) + self.alpha4*L1(other, cOther)
         return loss
 
 

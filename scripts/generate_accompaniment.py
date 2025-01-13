@@ -1,3 +1,11 @@
+'''
+Running this script results in generation of accompaniment in those
+Sources of DSD100 dataset where it isn't present. It does it by mixing
+all audios except vocals.wav.
+
+'''
+
+
 import os
 import torchaudio
 

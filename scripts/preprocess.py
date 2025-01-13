@@ -13,7 +13,7 @@ import numpy as np
 import math
 
 ARCHITECTURE_IN_USE = "UNET"
-FILE_TYPES = ['vocals', 'accompaniment', 'bass', 'drums', 'other', 'mix']
+FILE_TYPES = ['vocals', 'accompaniment', 'guitar', 'drums', 'other', 'mix']
 DATASET_PATH = "./DSD100"
 SAVE_DIR = "./Spectrograms"
 
@@ -45,7 +45,6 @@ def audio_to_spectrogram(waveform, window_size, hop_length):
 
 def cut_out_waveform(waveform, sample_step):
   if waveform.shape[1]<sample_step:
-    print("Warning: No segments generated. Skipping...")
     return []
   if waveform.shape[1] % sample_step != 0:
     waveform = waveform[:, :int(waveform.shape[1]/sample_step)*sample_step]
@@ -62,9 +61,11 @@ def preprocess_DSD100(dataset_base_path, save_path, window_size, hop_length, sam
   idx = 0
   os.makedirs(save_path, exist_ok=True)
   
+
   for i, (dirpath, dirname, filename) in enumerate(os.walk(os.path.join(dataset_base_path, 'Mixtures'))):
-   if idx<=2157:
+   
     for f in filename:
+      
 
         waveforms = {}
         spectrograms = {} 
@@ -78,7 +79,7 @@ def preprocess_DSD100(dataset_base_path, save_path, window_size, hop_length, sam
         
         os.makedirs(file_save_path, exist_ok=True)
         
-        print(f"Processing : {song_name} ({section})")
+        print(f"Processing : {song_name} ({section}) ({i})")
         
         mixture_waveform, _ = torchaudio.load(os.path.join(dirpath, f))
         waveforms['mix'] = mixture_waveform
@@ -99,15 +100,15 @@ def preprocess_DSD100(dataset_base_path, save_path, window_size, hop_length, sam
              
 
         print(f"Processing complete. \n")
-        print(f"mix size={len(spectrograms['mix'])}\naccompaniment size = {len(spectrograms['accompaniment'])}\nvocal size ={len(spectrograms['vocals'])}\n phase of mixture size = {len(phase_mix)}")
+        print(f"mix size={len(spectrograms['mix'])}\naccompaniment size = {len(spectrograms['accompaniment'])}\nvocal size ={len(spectrograms['vocals'])}")
 
-        for n in range(len(spectrograms['accompaniment'])):
+        for n in range(min(len(spectrograms['accompaniment']), len(spectrograms['guitar']), len(spectrograms['mix']))):
         
           np.savez(os.path.join(file_save_path, str(idx)+'.npz') , 
                   mix = spectrograms['mix'][n].numpy(), 
                   accompaniment = spectrograms['accompaniment'][n].numpy(),
                   vocals = spectrograms['vocals'][n].numpy(), 
-                  bass = spectrograms['bass'][n].numpy(), 
+                  guitar = spectrograms['guitar'][n].numpy(), 
                   drum = spectrograms['drums'][n].numpy(), 
                   other = spectrograms['other'][n].numpy(),
                   phase_mix = phase_mix[n].numpy() if section != "train" else None

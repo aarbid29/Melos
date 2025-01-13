@@ -32,7 +32,7 @@ class DSDDataset(Dataset):
             target = {
                 "vocals":data["vocals"],
                 "drums":data["drums"],
-                "bass":data["bass"],
+                "guitar":data["guitar"],
                 "other":data["other"]
             }
         return feature, target
