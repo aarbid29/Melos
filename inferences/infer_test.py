@@ -47,10 +47,10 @@ def infer(model, mix_spectrogram):
 if __name__=="__main__":
  
  model = SpectrogramUNet(in_channel=1, out_channel=2)
- model.load_state_dict(torch.load('models/vocal-accompaniment-separation/.voicemodel.pth', weights_only=True))
+ model.load_state_dict(torch.load('./models/vocal-accompaniment-separation/voicemodelp2.pth', weights_only=True))
  model.eval()
  
- spectrogram = np.load(BASE_DIR+"/test/2100.npz")
+ spectrogram = np.load(BASE_DIR+"/test/810.npz")
  mix = torch.from_numpy(spectrogram['mix'])
 
 
@@ -62,7 +62,7 @@ if __name__=="__main__":
  spec_to_audio(spectrogram=actual_acc_part, phase=phase, name="acc")
 
  inferred_vocal, inferred_acc = infer(model=model, mix_spectrogram=mix.unsqueeze(0))
- spec_to_audio(100*abs(inferred_vocal), phase=phase, name="ivocal")
+ spec_to_audio(1.5*abs(inferred_vocal), phase=phase, name="ivocal")
  spec_to_audio(abs(inferred_acc), phase=phase, name="iacc")
 
  

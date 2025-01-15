@@ -51,7 +51,7 @@ def process_audio(file_path, model_path, output_dir="./output"):
         inferred_vocal, inferred_acc = infer(model, mix_spectrogram=magnitude)
 
       
-        reconstructed_vocals.append((10 * abs(inferred_vocal), phase))
+        reconstructed_vocals.append((1.5 * abs(inferred_vocal), phase))
         reconstructed_accompaniment.append((abs(inferred_acc), phase))
 
     
@@ -74,7 +74,7 @@ def process_audio(file_path, model_path, output_dir="./output"):
 if __name__ == "__main__":
     
     process_audio(
-        file_path="basantaa.mp3",
-        model_path="models/vocal-accompaniment-separation/.voicemodel.pth",
+        file_path="./inferences/basantaa.mp3",
+        model_path="./models/vocal-accompaniment-separation/voicemodelp2.pth",
         output_dir="."
     )

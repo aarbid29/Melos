@@ -2,5 +2,3 @@ DSD100/
 venv/
 Spectrograms/
 __pycache__/
-*.mp3
-*.wav
