@@ -9,7 +9,7 @@ import os
 import numpy as np
 
 PATH = "./Spectrograms/train"
-VOCAL_ONLY = False
+VOCAL_ONLY = True
 
 two_norms = {}
 
