@@ -23,7 +23,9 @@ const Navbar = () => {
       {/* Updated background color to match footer */}
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Brand Name */}
-        <div className="text-2xl font-bold text-white">Melos</div>
+        <Link href="/">
+          <div className="text-2xl font-bold text-white">Melos</div>
+        </Link>
 
         {/* Menu Icon for Mobile */}
         <button

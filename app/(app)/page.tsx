@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 export default function page() {
   return (
@@ -30,18 +31,20 @@ export default function page() {
         >
           Get started
         </button>
-        <button
-          style={{
-            backgroundColor: "#FFF",
-            border: "1px solid #000",
-            padding: "10px 20px",
-            borderRadius: "25px",
-            cursor: "pointer",
-            fontSize: "1rem",
-          }}
-        >
-          Record now
-        </button>
+        <Link href="/convert">
+          <button
+            style={{
+              backgroundColor: "#FFF",
+              border: "1px solid #000",
+              padding: "10px 20px",
+              borderRadius: "25px",
+              cursor: "pointer",
+              fontSize: "1rem",
+            }}
+          >
+            Record now
+          </button>
+        </Link>
       </div>
     </div>
   );
