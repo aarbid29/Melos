@@ -2,3 +2,5 @@ DSD100/
 venv/
 Spectrograms/
 __pycache__/
+node_modules/
+.next/

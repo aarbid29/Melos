@@ -11,6 +11,7 @@ import torch
 import os
 import numpy as np
 import math
+from ..utils import cut_out_waveform, audio_to_spectrogram
 
 ARCHITECTURE_IN_USE = "UNET"
 FILE_TYPES = ['vocals', 'accompaniment', 'guitar', 'drums', 'other', 'mix']
@@ -26,34 +27,6 @@ T_FRAMES = 173
 
 CUT_DURATION = math.ceil((HOP_LENGTH*(T_FRAMES-1))/SAMPLING_RATE)
 SAMPLES_STEP = CUT_DURATION*SAMPLING_RATE
-
-
-def to_mono(signal):
-  if signal.shape[0]>1:
-    signal = torch.mean(signal, dim=0, keepdim=True)
-  return signal
-
-
-def audio_to_spectrogram(waveform, window_size, hop_length):
-  waveform = to_mono(waveform)
-  to_spectrogram  = torchaudio.transforms.Spectrogram(n_fft=window_size, hop_length=hop_length, power=None)
-  stft = to_spectrogram(waveform)
-  magnitude = torch.abs(stft)
-  phase = torch.angle(stft)
-  return magnitude, phase
-
-
-def cut_out_waveform(waveform, sample_step):
-  if waveform.shape[1]<sample_step:
-    return []
-  if waveform.shape[1] % sample_step != 0:
-    waveform = waveform[:, :int(waveform.shape[1]/sample_step)*sample_step]
-  result = []
-  for i in range(0, waveform.shape[1], sample_step):
-    tukra = waveform[:, i:i+sample_step]
-    result.append(tukra)
-  return result
-
 
 
 
