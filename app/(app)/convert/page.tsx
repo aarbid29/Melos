@@ -24,7 +24,7 @@ const AudioInput = () => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file.name);
-      const reader = new FileReader();
+      const reader = new FileReader(); // to read content of file
       reader.onload = (e: ProgressEvent<FileReader>) => {
         if (e.target?.result) {
           setFileContent(e.target.result as ArrayBuffer);
@@ -33,36 +33,77 @@ const AudioInput = () => {
       reader.readAsArrayBuffer(file);
     }
   };
-
   const uploadSeparate = async () => {
+    // Ensure a file is selected and its content is available
     if (!fileContent || !selectedFile) {
       setError("No file selected.");
       return;
     }
+
+    // Set loading state and clear any previous errors
     setLoading(true);
     setError(null);
 
     try {
       const formData = new FormData();
+
+      // Get file name or use default
+      const fileName =
+        selectedFile instanceof File ? selectedFile.name : "audio.wav";
+
+      // Append file as Blob
       formData.append(
         "file",
         new Blob([fileContent], { type: "audio/wav" }),
-        selectedFile
+        fileName
       );
 
+      // Sending the file to the backend (API route)
       const response = await axios.post("/api/audio/separate", formData, {
         headers: { "Content-Type": "multipart/form-data" },
+        responseType: "arraybuffer", // Ensure binary response for ZIP processing
       });
 
-      if (response.status === 200) {
-        router.push("/output");
-      } else {
-        setError("Failed to process the audio file.");
+      // Check if response is OK
+      if (response.status !== 200) {
+        const errorDetails = response.data.error || "Unknown error occurred.";
+        setError(`Upload failedddd: ${errorDetails}`);
+        return;
       }
-    } catch (error) {
-      setError("Error while uploading the file.");
+
+      // Load ZIP using JSZip
+      const zip = await JSZip.loadAsync(response.data);
+
+      // Extract audio files
+      const vocalFile = zip.file("vocals.wav");
+      const accompanimentFile = zip.file("accompaniment.wav");
+
+      if (!vocalFile || !accompanimentFile) {
+        setError("Failed to extract files from ZIP.");
+        return;
+      }
+
+      // Convert files to Blobs
+      const vocalBlob = await vocalFile.async("blob");
+      const accompanimentBlob = await accompanimentFile.async("blob");
+
+      // Create URLs
+      const vocalsUrl = URL.createObjectURL(vocalBlob);
+      const accompanimentUrl = URL.createObjectURL(accompanimentBlob);
+
+      console.log({ vocalsUrl, accompanimentUrl });
+
+      // Redirect to the Output page with the extracted URLs
+      router.push({
+        pathname: "/output",
+        query: { vocalsUrl, accompanimentUrl },
+      });
+    } catch (error: any) {
+      // Handle errors
+      setError(`Error while uploading the file: ${error.message}`);
       console.error("Upload error:", error);
     } finally {
+      // Reset loading state
       setLoading(false);
     }
   };
@@ -114,7 +155,7 @@ const AudioInput = () => {
       const formData = new FormData();
       formData.append("file", audioBlob, "recording.wav");
 
-      const response = await axios.post("/api/audio/separate1", formData, {
+      const response = await axios.post("/api/audio/separate", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -164,6 +205,7 @@ const AudioInput = () => {
           >
             Choose Files
           </label>
+
           <button
             className={`mt-3 ${buttonClass}`}
             onClick={uploadSeparate}
