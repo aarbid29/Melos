@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import JSZip from "jszip";
+import fs from "fs/promises";
+import path from "path";
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,19 +19,19 @@ export async function POST(request: NextRequest) {
     form.append("file", file);
 
     const fastApiResponse = await fetch(
-      "http://localhost:8000/separate-voice",
+      "http://localhost:8000/separate-voice", // Ensure this matches your FastAPI endpoint
       {
         method: "POST",
         body: form,
       }
     );
 
-    console.log("FastAPI Response Status:", fastApiResponse.status); // Log the status
-    console.log("FastAPI Response Headers:", fastApiResponse.headers); // Log the headers
+    console.log("FastAPI Response Status:", fastApiResponse.status);
+    console.log("FastAPI Response Headers:", fastApiResponse.headers);
 
     if (!fastApiResponse.ok) {
       const errorDetails = await fastApiResponse.text();
-      console.error("FastAPI Error:", errorDetails); // Log the error details
+      console.error("FastAPI Error:", errorDetails);
       return NextResponse.json(
         { error: `Upload failed: ${errorDetails}` },
         { status: fastApiResponse.status }
@@ -60,9 +62,26 @@ export async function POST(request: NextRequest) {
     const vocalBlob = await vocalFile.async("blob");
     const accompanimentBlob = await accompanimentFile.async("blob");
 
-    const vocalUrl = URL.createObjectURL(vocalBlob);
-    const accompanimentUrl = URL.createObjectURL(accompanimentBlob);
-    // console.log("vocal url:", vocalUrl);
+    // Save the blobs as files in the public directory
+    const vocalFileName = `vocals-${Date.now()}.wav`;
+    const accompanimentFileName = `accompaniment-${Date.now()}.wav`;
+
+    const publicDir = path.join(process.cwd(), "public");
+    const vocalFilePath = path.join(publicDir, vocalFileName);
+    const accompanimentFilePath = path.join(publicDir, accompanimentFileName);
+
+    await fs.writeFile(
+      vocalFilePath,
+      Buffer.from(await vocalBlob.arrayBuffer())
+    );
+    await fs.writeFile(
+      accompanimentFilePath,
+      Buffer.from(await accompanimentBlob.arrayBuffer())
+    );
+
+    // Create URLs relative to the root
+    const vocalUrl = `/${vocalFileName}`;
+    const accompanimentUrl = `/${accompanimentFileName}`;
 
     return NextResponse.json({
       message: "Audio separation successful",

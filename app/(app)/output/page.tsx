@@ -77,7 +77,12 @@ export default function OutputPage() {
             </div>
             <div className="text-center">
               <button
-                onClick={() => handleDownload(vocalsUrl, "vocals.wav")}
+                onClick={() =>
+                  handleDownload(
+                    vocalsUrl,
+                    vocalsUrl.substring(vocalsUrl.lastIndexOf("/") + 1)
+                  )
+                }
                 className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors"
               >
                 Download Vocals
@@ -117,7 +122,12 @@ export default function OutputPage() {
             <div className="text-center">
               <button
                 onClick={() =>
-                  handleDownload(accompanimentUrl, "accompaniment.wav")
+                  handleDownload(
+                    accompanimentUrl,
+                    accompanimentUrl.substring(
+                      accompanimentUrl.lastIndexOf("/") + 1
+                    )
+                  )
                 }
                 className="px-4 py-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors"
               >
@@ -130,4 +140,3 @@ export default function OutputPage() {
     </div>
   );
 }
-import React from "react";

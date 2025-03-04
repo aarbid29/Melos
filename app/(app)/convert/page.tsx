@@ -60,6 +60,7 @@ const AudioInput = () => {
 
       const { vocalUrl, accompanimentUrl } = response.data;
 
+      // Use the returned URLs directly, as they are now relative URLs to the public folder.
       const queryParams = new URLSearchParams({
         vocalsUrl: vocalUrl,
         accompanimentUrl: accompanimentUrl,
