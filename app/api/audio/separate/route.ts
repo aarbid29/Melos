@@ -3,7 +3,6 @@ import JSZip from "jszip";
 
 export async function POST(request: NextRequest) {
   try {
-    // Extract the form data from the request
     const formData = await request.formData();
     const file = formData.get("file");
 
@@ -14,11 +13,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create a FormData to send the file to the FastAPI server
     const form = new FormData();
     form.append("file", file);
 
-    // Send the file to the FastAPI server
     const fastApiResponse = await fetch(
       "http://localhost:8000/separate-voice",
       {
@@ -27,24 +24,29 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    console.log("FastAPI Response Status:", fastApiResponse);
+    console.log("FastAPI Response Status:", fastApiResponse.status); // Log the status
+    console.log("FastAPI Response Headers:", fastApiResponse.headers); // Log the headers
 
     if (!fastApiResponse.ok) {
       const errorDetails = await fastApiResponse.text();
+      console.error("FastAPI Error:", errorDetails); // Log the error details
       return NextResponse.json(
         { error: `Upload failed: ${errorDetails}` },
         { status: fastApiResponse.status }
       );
     }
 
-    // Convert response to ArrayBuffer (needed for JSZip)
-    const zipArrayBuffer = await fastApiResponse.arrayBuffer();
-    console.log("zipArrayBuffer:", zipArrayBuffer);
+    const contentType = fastApiResponse.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/zip")) {
+      return NextResponse.json(
+        { error: "Invalid response from server" },
+        { status: 500 }
+      );
+    }
 
-    // Load the ZIP file with JSZip
+    const zipArrayBuffer = await fastApiResponse.arrayBuffer();
     const zip = await JSZip.loadAsync(zipArrayBuffer);
 
-    // Extract files
     const vocalFile = zip.file("vocals.wav");
     const accompanimentFile = zip.file("accompaniment.wav");
 
@@ -55,13 +57,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Convert extracted files to Blobs
     const vocalBlob = await vocalFile.async("blob");
     const accompanimentBlob = await accompanimentFile.async("blob");
 
-    // Create URLs for frontend use
     const vocalUrl = URL.createObjectURL(vocalBlob);
     const accompanimentUrl = URL.createObjectURL(accompanimentBlob);
+    // console.log("vocal url:", vocalUrl);
 
     return NextResponse.json({
       message: "Audio separation successful",

@@ -1,8 +1,13 @@
-import { useRouter } from "next/router";
+"use client"; // Mark this component as a Client Component
+
+import { useSearchParams } from "next/navigation"; // Use `useSearchParams` for query parameters
 
 export default function OutputPage() {
-  const router = useRouter();
-  const { vocalsUrl, accompanimentUrl } = router.query;
+  const searchParams = useSearchParams();
+
+  // Get the query parameters
+  const vocalsUrl = searchParams.get("vocalsUrl");
+  const accompanimentUrl = searchParams.get("accompanimentUrl");
 
   return (
     <div>
@@ -10,7 +15,7 @@ export default function OutputPage() {
 
       {vocalsUrl && (
         <div>
-          <a href={vocalsUrl as string} download="vocals.wav">
+          <a href={vocalsUrl} download="vocals.wav">
             Download Vocals
           </a>
         </div>
@@ -18,7 +23,7 @@ export default function OutputPage() {
 
       {accompanimentUrl && (
         <div>
-          <a href={accompanimentUrl as string} download="accompaniment.wav">
+          <a href={accompanimentUrl} download="accompaniment.wav">
             Download Accompaniment
           </a>
         </div>
