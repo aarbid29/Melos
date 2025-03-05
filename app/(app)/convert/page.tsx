@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { encode } from "wav-encoder";
 
 const AudioInput = () => {
   const router = useRouter();
@@ -101,7 +102,7 @@ const AudioInput = () => {
     }
   };
 
-  const stopRecording = () => {
+  const stopRecording = async () => {
     if (mediaRecorder && audioStream) {
       mediaRecorder.stop();
       audioStream.getTracks().forEach((track) => track.stop());
@@ -117,23 +118,43 @@ const AudioInput = () => {
     }
     setLoading(true);
     setError(null);
-
+  
     try {
+      // Convert the recorded audio to WAV format
+      const arrayBuffer = await audioBlob.arrayBuffer();
+      const audioContext = new AudioContext();
+      const audioData = await audioContext.decodeAudioData(arrayBuffer);
+  
+      const wavBlob = await encode({
+        sampleRate: audioData.sampleRate,
+        channelData: Array.from({ length: audioData.numberOfChannels }, (_, i) =>
+          audioData.getChannelData(i)
+        ),
+      });
+  
       const formData = new FormData();
-      formData.append("file", audioBlob, "recording.wav");
-
+      formData.append("file", new Blob([wavBlob], { type: "audio/wav" }), "recording.wav");
+  
       const response = await axios.post("/api/audio/separate", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
-      if (response.status === 200) {
-        router.push("/output1");
-      } else {
-        setError("Failed to process the recorded audio.");
+  
+      if (response.status !== 200) {
+        throw new Error("Upload failed");
       }
-    } catch (err: any) {
-      setError("Error while processing the recording.");
-      console.error("Processing error:", err);
+
+      const { vocalUrl, accompanimentUrl } = response.data;
+
+      // Use the returned URLs directly, as they are now relative URLs to the public folder.
+      const queryParams = new URLSearchParams({
+        vocalsUrl: vocalUrl,
+        accompanimentUrl: accompanimentUrl,
+      }).toString();
+
+      router.push(`/output?${queryParams}`);
+    } catch (error: any) {
+      setError(`Error while uploading the file: ${error.message}`);
+      console.error("Upload error:", error);
     } finally {
       setLoading(false);
     }
