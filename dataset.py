@@ -31,7 +31,7 @@ class DSDDataset(Dataset):
         else:
             target = {
                 "vocals":data["vocals"],
-                "drums":data["drums"],
+                "drums":data["drum"],
                 "guitar":data["guitar"],
                 "other":data["other"]
             }
