@@ -3,7 +3,7 @@ from utils import process_audio
 
 
 if __name__ == "__main__":
-    waveform, sr =torchaudio.load("./inferences/blue.wav" )
+    waveform, sr =torchaudio.load("./inferences/tu jane na.mp3" )
     process_audio(
         waveform=waveform,
         model_path="./models/all-separation/multisepmodelp1.pth",
