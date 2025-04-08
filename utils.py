@@ -40,7 +40,7 @@ def infer(model, mix_spectrogram, out_channels=2):
         output = model(mix_spectrogram).squeeze(0)
       #  print(output.shape)
         rv = [output[i, :, :] for i in range(out_channels)]
-        print(len(rv))
+       # print(len(rv))
         return rv
 
 
@@ -70,10 +70,10 @@ def spec_to_audio(spectrogram, phase,  n_fft, hop_length, save=False, name="out"
 
 
 
-def process_audio(waveform, model_path, samp_rate, samples_step, window_size, hop_length, mode="vocal-accompaniment", save=False, output_dir="./output"):
+def process_audio(waveform, model_path, samp_rate, samples_step, window_size, hop_length, mode="vocal", save=False, output_dir="./output"):
     os.makedirs(output_dir, exist_ok=True)
     print(waveform[0].shape)
-    if mode == "vocal-accompaniment":
+    if mode == "vocal":
         out_channels = 2
         sources = ["vocals", "accompaniment"]
     elif mode == "multi":
