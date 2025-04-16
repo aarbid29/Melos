@@ -28,7 +28,7 @@ const Navbar = () => {
           href="#"
           className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
-          How It Works
+          Karaoke
         </a>
         <a
           href="#"
