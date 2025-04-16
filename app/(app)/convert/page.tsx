@@ -83,6 +83,7 @@ const AudioInput = () => {
       setAudioStream(stream);
 
       const recorder = new MediaRecorder(stream);
+      //blob
       recorder.ondataavailable = (event) => {
         const blob = new Blob([event.data], { type: "audio/wav" });
         setAudioBlob(blob);
@@ -118,27 +119,32 @@ const AudioInput = () => {
     }
     setLoading(true);
     setError(null);
-  
+
     try {
       // Convert the recorded audio to WAV format
       const arrayBuffer = await audioBlob.arrayBuffer();
       const audioContext = new AudioContext();
       const audioData = await audioContext.decodeAudioData(arrayBuffer);
-  
+
       const wavBlob = await encode({
         sampleRate: audioData.sampleRate,
-        channelData: Array.from({ length: audioData.numberOfChannels }, (_, i) =>
-          audioData.getChannelData(i)
+        channelData: Array.from(
+          { length: audioData.numberOfChannels },
+          (_, i) => audioData.getChannelData(i)
         ),
       });
-  
+
       const formData = new FormData();
-      formData.append("file", new Blob([wavBlob], { type: "audio/wav" }), "recording.wav");
-  
+      formData.append(
+        "file",
+        new Blob([wavBlob], { type: "audio/wav" }),
+        "recording.wav"
+      );
+
       const response = await axios.post("/api/audio/separate", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-  
+
       if (response.status !== 200) {
         throw new Error("Upload failed");
       }

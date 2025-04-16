@@ -7,90 +7,66 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
-  // Ensure hydration matches by waiting for the component to mount
   useEffect(() => {
     setHydrated(true);
   }, []);
 
   if (!hydrated) {
-    // Avoid rendering mismatched HTML during hydration
     return null;
   }
-
   return (
-    <nav className="bg-[#00bcd4] shadow-lg">
-      {" "}
-      {/* Updated background color to match footer */}
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Brand Name */}
-        <Link href="/">
-          <div className="text-2xl font-bold text-white">Melos</div>
-        </Link>
-
-        {/* Menu Icon for Mobile */}
-        <button
-          className="md:hidden block text-white focus:outline-none"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <svg
-            className="h-6 w-6"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            {isOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
-            )}
-          </svg>
-        </button>
-
-        {/* Navbar Links */}
-        <div
-          className={`md:flex items-center gap-8 ${
-            isOpen ? "block" : "hidden"
-          } absolute md:static top-14 left-0 w-full md:w-auto bg-[#00bcd4] md:bg-transparent`} // Updated background color to match footer
-        >
-          <Link
-            href="/"
-            className="block px-4 py-2 text-lg text-white hover:text-cyan-200 transition duration-300"
-          >
-            Home
-          </Link>
-          <Link
-            href="/about"
-            className="block px-4 py-2 text-lg text-white hover:text-cyan-200 transition duration-300"
-          >
-            About
-          </Link>
-          <Link
-            href="/convert"
-            className="block px-4 py-2 text-lg text-white hover:text-cyan-200 transition duration-300"
-          >
-            Convert
-          </Link>
-          <Link
-            href="/faq"
-            className="block px-4 py-2 text-lg text-white hover:text-cyan-200 transition duration-300"
-          >
-            FAQ
-          </Link>
+    <header className="w-full py-6 px-8 flex items-center justify-between">
+      <div className="flex items-center space-x-2">
+        <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+          <WaveformIcon className="h-4 w-4 text-primary-foreground" />
         </div>
+        <h1 className="text-xl font-medium tracking-tight">Melos</h1>
       </div>
-    </nav>
+
+      <nav className="hidden md:flex items-center space-x-6">
+        <a
+          href="#"
+          className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          How It Works
+        </a>
+        <a
+          href="#"
+          className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          Examples
+        </a>
+        <a
+          href="https://github.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          GitHub
+        </a>
+      </nav>
+    </header>
   );
 };
+
+// Waveform Icon component
+const WaveformIcon = ({ className }: { className?: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M2 12h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H2v-8z" />
+    <path d="M6 8h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6V8z" />
+    <path d="M10 4h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-2V4z" />
+    <path d="M14 2h2a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2h-2V2z" />
+    <path d="M18 6h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2V6z" />
+  </svg>
+);
 
 export default Navbar;

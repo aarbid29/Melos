@@ -7,7 +7,6 @@ const Footer = () => {
     <footer style={styles.footer}>
       <div style={styles.container}>
         <div style={styles.branding}>
-          {/* <h2 style={styles.brandingTitle}>Melos</h2> */}
           <p style={styles.brandingText}>
             &copy; {currentYear} Melos. All rights reserved.
           </p>
@@ -30,11 +29,12 @@ const Footer = () => {
 
 const styles = {
   footer: {
-    backgroundColor: "#00bcd4", // Cyan background
-    color: "#ffffff", // White text
-    padding: "10px 0", // Reduced padding
+    backgroundColor: "#ffffff",
+    color: "#333333",
+    padding: "10px 0",
     textAlign: "center",
-    boxShadow: "0 -2px 15px rgba(0,0,0,0.1)",
+    borderTop: "1px solid #e5e5e5",
+    boxShadow: "0 -2px 15px rgba(0,0,0,0.05)",
   },
   container: {
     maxWidth: "800px",
@@ -46,28 +46,21 @@ const styles = {
     justifyContent: "center",
   },
   branding: {
-    marginBottom: "10px", // Reduced margin
-  },
-  brandingTitle: {
-    fontSize: "36px",
-    margin: "0",
-    fontWeight: "bold",
-    letterSpacing: "1px",
-    color: "#ffffff",
+    marginBottom: "10px",
   },
   brandingText: {
     fontSize: "16px",
-    color: "#ffffff",
-    marginTop: "5px", // Reduced margin
+    color: "#333333",
+    marginTop: "5px",
   },
   links: {
     display: "flex",
-    gap: "10px", // Adjusted gap for better spacing
-    marginBottom: "10px", // Reduced margin
+    gap: "10px",
+    marginBottom: "10px",
     justifyContent: "center",
   },
   link: {
-    color: "#ffffff",
+    color: "#333333",
     textDecoration: "none",
     fontSize: "16px",
     fontWeight: "500",
