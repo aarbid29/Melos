@@ -107,15 +107,16 @@ export default function page() {
       });
 
       if (response.status !== 200) {
-        throw new Error("Upload failed");
+        throw new Error("Upload failed123");
       }
-
-      const { vocalUrl, accompanimentUrl } = response.data;
+      const { vocalUrl, drumsUrl, guitarUrl, otherUrl } = response.data;
 
       // Use the returned URLs directly, as they are now relative URLs to the public folder.
       const queryParams = new URLSearchParams({
-        vocalsUrl: vocalUrl,
-        accompanimentUrl: accompanimentUrl,
+        vocalUrl,
+        drumsUrl,
+        guitarUrl,
+        otherUrl,
       }).toString();
 
       router.push(`/output?${queryParams}`);
@@ -199,13 +200,14 @@ export default function page() {
       if (response.status !== 200) {
         throw new Error("Upload failed");
       }
-
-      const { vocalUrl, accompanimentUrl } = response.data;
+      const { vocalUrl, drumsUrl, guitarUrl, otherUrl } = response.data;
 
       // Use the returned URLs directly, as they are now relative URLs to the public folder.
       const queryParams = new URLSearchParams({
-        vocalsUrl: vocalUrl,
-        accompanimentUrl: accompanimentUrl,
+        vocalUrl,
+        drumsUrl,
+        guitarUrl,
+        otherUrl,
       }).toString();
 
       router.push(`/output?${queryParams}`);
@@ -250,6 +252,7 @@ export default function page() {
               className="mt-3 hidden"
               id="file-upload"
             />
+            <br />
             <label
               htmlFor="file-upload"
               className={`mt-1 cursor-pointer bg-gray-600 hover:bg-gray-900 text-white px-4 py-2 rounded ${buttonClass}`}
