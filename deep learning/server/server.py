@@ -124,7 +124,28 @@ async def karaoke_split(mode: str, track:UploadFile=File(...)):
         "Content-Disposition": 'attachment; filename="karaoke_track.wav"'
     })
    
+@server.post("/karaoke-merge")
+async def karaoke_merge( track1:UploadFile=File(...), track2:UploadFile=File(...)):
+   
+   audio_bytes1 = await track1.read()
+   audio_bytes2 = await track2.read()
+   waveform1, sr = torchaudio.load(BytesIO(audio_bytes1))
+   waveform2, sr = torchaudio.load(BytesIO(audio_bytes2))
+
+   min_len = min(waveform1.shape[1], waveform2.shape[1])
+   waveform1 = waveform1[:, :min_len]
+   waveform2 = waveform2[:, :min_len]
+
+   merged_waveform = waveform1+waveform2
+
+   out_buffer = BytesIO()
+   torchaudio.save(out_buffer, merged_waveform, sr, format="wav")
+   out_buffer.seek(0)
+   return StreamingResponse(out_buffer, media_type="audio/wav", headers={
+        "Content-Disposition": 'attachment; filename="karaoke_output.wav"'
+    })
  
+   
 
          
          
