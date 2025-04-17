@@ -40,6 +40,8 @@ order_mapping = {
    
 }
 
+karaoke_modes= ['no-vocals', 'guitar-removed', 'drums-removed', 'guitar-only']
+
 
 
 @server.post("/separate/{mode}")
@@ -78,6 +80,14 @@ async def separateV(mode: str,file: UploadFile = File(...) ):
     
     except Exception as e:
         return {"error": f"Error : {str(e)}"}
+    
+@server.post("/karaoke/split/{mode}")
+async def karaoke_split(mode: str, file: UploadFile=File(...)):
+   pass
+
+@server.post("/karaoke/merge")
+async def karaoke_merge(vocal_file: UploadFile=File(...), track_file: UploadFile=File(...)):
+   pass
 
 if __name__ == "__main__":
     uvicorn.run(server, host="0.0.0.0", port=8000)
