@@ -6,8 +6,8 @@ if __name__ == "__main__":
     waveform, sr =torchaudio.load("./inferences/tu jane na.mp3" )
     process_audio(
         waveform=waveform,
-        model_path="./models/all-separation/multisepmodelp1.pth",
-        mode='multi',
+        model_path="./models/voicemodelp2.pth",
+        mode='vocal',
         save=True,
         output_dir=".",
         hop_length=512,

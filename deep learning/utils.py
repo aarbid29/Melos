@@ -80,7 +80,7 @@ def process_audio(waveform, model_path, samp_rate, samples_step, window_size, ho
         out_channels = 4
         sources = ["vocals", "drums", "guitar", "other"]
     else:
-        raise ValueError("Invalid mode. Choose either 'vocal-accompaniment' or 'multi'.")
+        raise ValueError("Invalid mode. Choose either 'vocal' or 'multi'.")
 
     model = SpectrogramUNet(in_channel=1, out_channel=out_channels)
     model.load_state_dict(torch.load(model_path, map_location=torch.device("cpu")))
