@@ -45,3 +45,4 @@ __pycache__/
 node_modules/
 .next/
 deep learning/myenv2/
+.env
