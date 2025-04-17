@@ -81,7 +81,7 @@ async def separateV(mode: str,file: UploadFile = File(...) ):
             print(f"doing for {order_mapping[mode][idx]}")
             zip_file.writestr(f"{order_mapping[mode][idx]}.wav", audio_buffer.read())
         
-        
+        zip_buffer.seek(0)
         return StreamingResponse(zip_buffer, media_type="application/zip")
     
     except Exception as e:

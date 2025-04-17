@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     form.append("file", file);
 
     const fastApiResponse = await fetch(
-      "http://localhost:8000/separate-voice", // Ensure this matches your FastAPI endpoint
+      "http://localhost:8000/separate/multi", // Ensure this matches your FastAPI endpoint
       {
         method: "POST",
         body: form,
