@@ -1,26 +1,30 @@
 import requests
-import sys
+import zipfile
+import os
+from io import BytesIO
 
-API_URL = "http://127.0.0.1:8000/separate-voice"
-INPUT_AUDIO_FILE = "scale.wav" 
-OUTPUT_ZIP_FILE = "separated_audio.zip"
+url = "http://localhost:8000/separate/multi"
+file_path = "./inferences/scale.wav"
+output_dir = "separated_output"
 
-def upload_audio_and_download_zip(input_audio, output_zip):
+
+with open(file_path, "rb") as f:
+    files = {"file": ("scale.wav", f, "audio/wav")}
+    response = requests.post(url, files=files)
+
+
+if response.status_code == 200:
+    os.makedirs(output_dir, exist_ok=True)
+
+  
+    zip_buffer = BytesIO(response.content)
+    with zipfile.ZipFile(zip_buffer, "r") as zip_ref:
+        zip_ref.extractall(output_dir)
+
+    print(f" Extracted separated audio files to '{output_dir}'")
+    print("Files:", os.listdir(output_dir))
+else:
     try:
-        with open(input_audio, "rb") as file:
-            files = {"file": file}
-            response = requests.post(API_URL, files=files)
-            
-            if response.status_code == 200:
-                with open(output_zip, "wb") as out_file:
-                    out_file.write(response.content)
-                print(f"Downloaded: {output_zip}")
-            else:
-                print(f"Error: {response.status_code} - {response.text}")
-    except Exception as e:
-        print(f"Exception occurred: {e}")
-
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        INPUT_AUDIO_FILE = sys.argv[1]
-    upload_audio_and_download_zip(INPUT_AUDIO_FILE, OUTPUT_ZIP_FILE)
+        print(f" Error {response.status_code}: {response.json()}")
+    except Exception:
+        print(f"Error {response.status_code}: {response.text}")

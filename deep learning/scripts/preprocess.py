@@ -11,7 +11,7 @@ import torch
 import os
 import numpy as np
 import math
-from ..utils import cut_out_waveform, audio_to_spectrogram
+from utils import cut_out_waveform, audio_to_spectrogram
 
 ARCHITECTURE_IN_USE = "UNET"
 FILE_TYPES = ['vocals', 'accompaniment', 'guitar', 'drums', 'other', 'mix']
