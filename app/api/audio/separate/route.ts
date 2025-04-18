@@ -7,6 +7,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get("file");
+    const actual = formData.get("file");
 
     if (!file || !(file instanceof Blob)) {
       return NextResponse.json(
@@ -46,24 +47,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // const zipArrayBuffer = await fastApiResponse.arrayBuffer();
-    // const zip = await JSZip.loadAsync(zipArrayBuffer);
-
     const zipArrayBuffer = await fastApiResponse.arrayBuffer();
-    console.log("ArrayBuffer byteLength:", zipArrayBuffer.byteLength);
-
-    if (zipArrayBuffer.byteLength === 0) {
-      throw new Error("Zip file is empty — check server response.");
-    }
-
     const zip = await JSZip.loadAsync(zipArrayBuffer);
 
     const vocalFile = zip.file("vocals.wav");
-    const drumsFile = zip.file("drums.wav");
     const guitarFile = zip.file("guitar.wav");
+    const drumsFile = zip.file("drums.wav");
     const otherFile = zip.file("other.wav");
 
-    if (!vocalFile || !drumsFile || !guitarFile || !otherFile) {
+    if (!vocalFile || !guitarFile || !drumsFile || !otherFile) {
       return NextResponse.json(
         { error: "Failed to extract files from ZIP" },
         { status: 500 }
@@ -71,55 +63,63 @@ export async function POST(request: NextRequest) {
     }
 
     const vocalBlob = await vocalFile.async("blob");
-    const drumsBlob = await drumsFile.async("blob");
     const guitarBlob = await guitarFile.async("blob");
+    const drumsBlob = await drumsFile.async("blob");
     const otherBlob = await otherFile.async("blob");
 
-    const timestamp = Date.now();
-    const vocalFileName = `vocals-${timestamp}.wav`;
-    const drumsFileName = `drums-${timestamp}.wav`;
-    const guitarFileName = `guitar-${timestamp}.wav`;
-    const otherFileName = `other-${timestamp}.wav`;
+    // for  blobs as files in public direct
+    const vocalFileName = `vocals-${Date.now()}.wav`;
+    const guitarFileName = `guitar-${Date.now()}.wav`;
+    const drumsFileName = `drums-${Date.now()}.wav`;
+    const otherFileName = `others-${Date.now()}.wav`;
+
+    const actualFileName = `file.name-${Date.now()}.wav`;
 
     const publicDir = path.join(process.cwd(), "public");
     const vocalFilePath = path.join(publicDir, vocalFileName);
-    const drumsFilePath = path.join(publicDir, drumsFileName);
     const guitarFilePath = path.join(publicDir, guitarFileName);
+    const drumsFilePath = path.join(publicDir, drumsFileName);
     const otherFilePath = path.join(publicDir, otherFileName);
+
+    const actualFilePath = path.join(publicDir, actualFileName);
 
     await fs.writeFile(
       vocalFilePath,
       Buffer.from(await vocalBlob.arrayBuffer())
     );
     await fs.writeFile(
-      drumsFilePath,
-      Buffer.from(await drumsBlob.arrayBuffer())
-    );
-    await fs.writeFile(
       guitarFilePath,
       Buffer.from(await guitarBlob.arrayBuffer())
+    );
+    await fs.writeFile(
+      drumsFilePath,
+      Buffer.from(await drumsBlob.arrayBuffer())
     );
     await fs.writeFile(
       otherFilePath,
       Buffer.from(await otherBlob.arrayBuffer())
     );
 
+    await fs.writeFile(actualFilePath, Buffer.from(await actual.arrayBuffer()));
+
     const vocalUrl = `/${vocalFileName}`;
-    const drumsUrl = `/${drumsFileName}`;
     const guitarUrl = `/${guitarFileName}`;
+    const drumsUrl = `/${drumsFileName}`;
     const otherUrl = `/${otherFileName}`;
 
+    const actualUrl = `/${actualFileName}`;
     return NextResponse.json({
       message: "Audio separation successful",
       vocalUrl,
-      drumsUrl,
       guitarUrl,
+      drumsUrl,
       otherUrl,
+      actualUrl,
     });
   } catch (error: any) {
-    console.error("Error handling request:", error);
+    console.error("Error handling file upload:", error);
     return NextResponse.json(
-      { error: "Unexpected server error", details: error.message },
+      { error: "Upload failed", details: error.message },
       { status: 500 }
     );
   }

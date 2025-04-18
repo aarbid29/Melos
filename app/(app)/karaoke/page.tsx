@@ -65,23 +65,23 @@ export default function page() {
     "guitar-only",
   ];
   const handleChange = (mode: string) => {
-    setSelectedModes(mode === selectedModes ? null : mode); // Uncheck if already selected
+    setSelectedModes(mode === selectedModes ? null : mode);
   };
 
   const [selectedModes, setSelectedModes] = useState<string | null>(null);
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null); // Audio blob for recording
-  const [fileContent, setFileContent] = useState<ArrayBuffer | null>(null); // File content for upload
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [fileContent, setFileContent] = useState<ArrayBuffer | null>(null);
   const [recording, setRecording] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null); // Audio preview URL
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [recordingStatus, setRecordingStatus] = useState("Inactive");
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
-  const [selectedFile, setSelectedFile] = useState<string | null>(null); // Selected file name
-  const [selectedFile2, setSelectedFile2] = useState<string | null>(null); // Selected file name
-  const [audioStream, setAudioStream] = useState<MediaStream | null>(null); // Audio stream
-  const [loading, setLoading] = useState(false); // Loading state for server requests
-  const [error, setError] = useState<string | null>(null); // Error messages
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  // const [selectedFile2, setSelectedFile2] = useState<string | null>(null);
+  const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -106,7 +106,7 @@ export default function page() {
     setError(null);
 
     try {
-      // Convert the recorded audio to WAV format
+      // recorded audio to wav format
       const arrayBuffer = await audioBlob.arrayBuffer();
       const audioContext = new AudioContext();
       const audioData = await audioContext.decodeAudioData(arrayBuffer);
@@ -130,7 +130,7 @@ export default function page() {
         new Blob([wavBlob], { type: "audio/wav" }),
         "recording.wav"
       );
-      formData.append("mode", selectedModes || "default");
+      formData.append("mode", selectedModes || "vocals-removed");
 
       const response = await axios.post("/api/audio/karaoke", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -140,16 +140,16 @@ export default function page() {
         throw new Error("Upload failed");
       }
 
-      const { vocalUrl, drumsUrl, guitarUrl, otherUrl } = response.data;
+      const { fileUrl, fileUrl11, fileUrl22, removeUrl } = response.data;
 
       const queryParams = new URLSearchParams({
-        vocalUrl,
-        drumsUrl,
-        guitarUrl,
-        otherUrl,
+        fileUrl,
+        fileUrl11,
+        fileUrl22,
+        removeUrl,
       }).toString();
 
-      router.push(`/output?${queryParams}`);
+      router.push(`/karaoke_output?${queryParams}`);
     } catch (error: any) {
       setError(`Error while uploading the files: ${error.message}`);
       console.error("Upload error:", error);
@@ -234,7 +234,6 @@ export default function page() {
               </label>
             ))}
           </div>
-          {/* Upload Music Files */}
           <div className="bg-white border border-gray-400 p-4 rounded-lg shadow-md w-72 text-center space-y-3">
             <h2 className="text-lg font-semibold text-gray-800">
               Upload Music Files
@@ -268,7 +267,6 @@ export default function page() {
               {loading ? "Processing..." : "Mix Audio"}
             </button>
           </div>
-          {/* Record Music On the Spot */}
           <div className="bg-white border border-gray-400 p-4 rounded-lg shadow-md w-72 text-center flex flex-col">
             <h2 className="text-lg font-semibold text-gray-800 mb-3">
               Record Voice

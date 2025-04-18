@@ -109,14 +109,15 @@ export default function page() {
       if (response.status !== 200) {
         throw new Error("Upload failed123");
       }
-      const { vocalUrl, drumsUrl, guitarUrl, otherUrl } = response.data;
+      const { vocalUrl, drumsUrl, guitarUrl, otherUrl, actualUrl } =
+        response.data;
 
-      // Use the returned URLs directly, as they are now relative URLs to the public folder.
       const queryParams = new URLSearchParams({
         vocalUrl,
         drumsUrl,
         guitarUrl,
         otherUrl,
+        actualUrl,
       }).toString();
 
       router.push(`/output?${queryParams}`);
@@ -173,7 +174,7 @@ export default function page() {
     setError(null);
 
     try {
-      // Convert the recorded audio to WAV format
+      // recorded audio to wav
       const arrayBuffer = await audioBlob.arrayBuffer();
       const audioContext = new AudioContext();
       const audioData = await audioContext.decodeAudioData(arrayBuffer);
@@ -202,7 +203,6 @@ export default function page() {
       }
       const { vocalUrl, drumsUrl, guitarUrl, otherUrl } = response.data;
 
-      // Use the returned URLs directly, as they are now relative URLs to the public folder.
       const queryParams = new URLSearchParams({
         vocalUrl,
         drumsUrl,
@@ -269,7 +269,6 @@ export default function page() {
             </button>
           </div>
 
-          {/* Record Music On the Spot */}
           <div className="bg-white border border-gray-400 p-4 rounded-lg shadow-md w-72 text-center flex flex-col">
             <h2 className="text-lg font-semibold text-gray-800 mb-3">
               Record Music On the Spot
