@@ -98,7 +98,7 @@ export default function page() {
   };
   const uploadSeparate = async () => {
     if (!fileContent || !selectedFile || !audioBlob) {
-      setError("Please upload a file and record audio before submitting.");
+      setError("Please upload a file and record audio before submittinggg.");
       return;
     }
 

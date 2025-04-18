@@ -59,24 +59,24 @@ export default function page() {
   );
   const router = useRouter();
 
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null); // Audio blob for recording
-  const [fileContent, setFileContent] = useState<ArrayBuffer | null>(null); // File content for upload
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [fileContent, setFileContent] = useState<ArrayBuffer | null>(null);
   const [recording, setRecording] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null); // Audio preview URL
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [recordingStatus, setRecordingStatus] = useState("Inactive");
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
-  const [selectedFile, setSelectedFile] = useState<string | null>(null); // Selected file name
-  const [audioStream, setAudioStream] = useState<MediaStream | null>(null); // Audio stream
-  const [loading, setLoading] = useState(false); // Loading state for server requests
-  const [error, setError] = useState<string | null>(null); // Error messages
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file.name);
-      const reader = new FileReader(); // to read content of file
+      const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
         if (e.target?.result) {
           setFileContent(e.target.result as ArrayBuffer);

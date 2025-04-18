@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       !mode
     ) {
       return NextResponse.json(
-        { error: "Missing or invalid file1, file2, or mode" },
+        { error: "Missing or invalid file1, file2, or modeee" },
         { status: 400 }
       );
     }

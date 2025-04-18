@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     const contentType = fastApiResponse.headers.get("content-type");
     if (!contentType || !contentType.includes("application/zip")) {
       return NextResponse.json(
-        { error: "Invalid response from server" },
+        { error: "Invalid response from serverrrr" },
         { status: 500 }
       );
     }

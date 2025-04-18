@@ -47,7 +47,7 @@ function WaveformPlayer({
     //   <div ref={waveformRef} className="w-full mb-3" />
     //   <button
     //     onClick={handlePlayPause}
-    //     className="px-4 py-2 bg-gray-600 text-white rounded-full hover:bg-gray-800"
+    //     className="px-4 py-2 bg-grayy-600 text-white rounded-full hover:bg-gray-800"
     //   >
     //     Play / Pause
     //   </button>
