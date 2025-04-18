@@ -3,11 +3,11 @@ from utils import process_audio
 
 
 if __name__ == "__main__":
-    waveform, sr =torchaudio.load("./inferences/tu jane na.mp3" )
+    waveform, sr =torchaudio.load("./inferences/test.wav" )
     process_audio(
         waveform=waveform,
-        model_path="./models/voicemodelp2.pth",
-        mode='vocal',
+        model_path="./models/multisepmodelp1.pth",
+        mode='multi',
         save=True,
         output_dir=".",
         hop_length=512,

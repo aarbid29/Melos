@@ -45,3 +45,26 @@ __pycache__/
 node_modules/
 .next/
 deep learning/myenv2/
+.env
+
+
+# Ignore virtual environments
+env/
+ENV/
+venv/
+deep learning/env/
+
+# Ignore compiled libraries
+*.dylib
+*.so
+*.dll
+
+# Ignore cache and Python junk
+__pycache__/
+*.pyc
+*.pyo
+
+
+
+
+

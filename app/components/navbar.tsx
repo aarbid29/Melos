@@ -18,14 +18,20 @@ const Navbar = () => {
     <header className="w-full py-6 px-8 flex items-center justify-between">
       <div className="flex items-center space-x-2">
         <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-          <WaveformIcon className="h-4 w-4 text-primary-foreground" />
+          <Link href="/">
+            <WaveformIcon className="h-4 w-4 text-primary-foreground" />
+          </Link>
         </div>
-        <h1 className="text-xl font-medium tracking-tight">Melos</h1>
+        <Link href="/">
+          <h1 className="text-xl font-medium tracking-tight cursor-pointer">
+            Melos
+          </h1>
+        </Link>
       </div>
 
       <nav className="hidden md:flex items-center space-x-6">
         <a
-          href="#"
+          href="/karaoke"
           className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           Karaoke

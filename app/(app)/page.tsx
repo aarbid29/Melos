@@ -59,24 +59,24 @@ export default function page() {
   );
   const router = useRouter();
 
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null); // Audio blob for recording
-  const [fileContent, setFileContent] = useState<ArrayBuffer | null>(null); // File content for upload
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [fileContent, setFileContent] = useState<ArrayBuffer | null>(null);
   const [recording, setRecording] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null); // Audio preview URL
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [recordingStatus, setRecordingStatus] = useState("Inactive");
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
-  const [selectedFile, setSelectedFile] = useState<string | null>(null); // Selected file name
-  const [audioStream, setAudioStream] = useState<MediaStream | null>(null); // Audio stream
-  const [loading, setLoading] = useState(false); // Loading state for server requests
-  const [error, setError] = useState<string | null>(null); // Error messages
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file.name);
-      const reader = new FileReader(); // to read content of file
+      const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
         if (e.target?.result) {
           setFileContent(e.target.result as ArrayBuffer);
@@ -107,15 +107,17 @@ export default function page() {
       });
 
       if (response.status !== 200) {
-        throw new Error("Upload failed");
+        throw new Error("Upload failed123");
       }
+      const { vocalUrl, drumsUrl, guitarUrl, otherUrl, actualUrl } =
+        response.data;
 
-      const { vocalUrl, accompanimentUrl } = response.data;
-
-      // Use the returned URLs directly, as they are now relative URLs to the public folder.
       const queryParams = new URLSearchParams({
-        vocalsUrl: vocalUrl,
-        accompanimentUrl: accompanimentUrl,
+        vocalUrl,
+        drumsUrl,
+        guitarUrl,
+        otherUrl,
+        actualUrl,
       }).toString();
 
       router.push(`/output?${queryParams}`);
@@ -172,7 +174,7 @@ export default function page() {
     setError(null);
 
     try {
-      // Convert the recorded audio to WAV format
+      // recorded audio to wav
       const arrayBuffer = await audioBlob.arrayBuffer();
       const audioContext = new AudioContext();
       const audioData = await audioContext.decodeAudioData(arrayBuffer);
@@ -199,13 +201,13 @@ export default function page() {
       if (response.status !== 200) {
         throw new Error("Upload failed");
       }
+      const { vocalUrl, drumsUrl, guitarUrl, otherUrl } = response.data;
 
-      const { vocalUrl, accompanimentUrl } = response.data;
-
-      // Use the returned URLs directly, as they are now relative URLs to the public folder.
       const queryParams = new URLSearchParams({
-        vocalsUrl: vocalUrl,
-        accompanimentUrl: accompanimentUrl,
+        vocalUrl,
+        drumsUrl,
+        guitarUrl,
+        otherUrl,
       }).toString();
 
       router.push(`/output?${queryParams}`);
@@ -250,6 +252,7 @@ export default function page() {
               className="mt-3 hidden"
               id="file-upload"
             />
+            <br />
             <label
               htmlFor="file-upload"
               className={`mt-1 cursor-pointer bg-gray-600 hover:bg-gray-900 text-white px-4 py-2 rounded ${buttonClass}`}
@@ -266,7 +269,6 @@ export default function page() {
             </button>
           </div>
 
-          {/* Record Music On the Spot */}
           <div className="bg-white border border-gray-400 p-4 rounded-lg shadow-md w-72 text-center flex flex-col">
             <h2 className="text-lg font-semibold text-gray-800 mb-3">
               Record Music On the Spot
